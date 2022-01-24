@@ -12,7 +12,7 @@ customer_id text not null,
 dialog_id text not null,
 message text not null,
 language text not null,
-consent boolean
+consent boolean not null default false
 );
 
 
