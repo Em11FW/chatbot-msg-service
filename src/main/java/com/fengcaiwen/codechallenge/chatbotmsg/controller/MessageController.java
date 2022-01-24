@@ -33,4 +33,16 @@ public class MessageController {
         map.put("message", "pushed message " + messageID);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
+
+    @PostMapping("/consent/{dialogID}")
+    public ResponseEntity<Map<String, String>> grantConsent(@RequestBody Boolean granted, @PathVariable("dialogID") final String dialogID) {
+
+        Map<String, String> map = new HashMap<>();
+        map.put("message", messageService.handleConsent(granted, dialogID));
+        return new ResponseEntity<>(map, HttpStatus.OK);
+
+
+    }
+
+
 }

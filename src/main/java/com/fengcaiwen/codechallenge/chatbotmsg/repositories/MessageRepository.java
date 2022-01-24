@@ -8,4 +8,7 @@ public interface MessageRepository {
 
     Integer create(String customerID, String dialogID, String text, String language);
 
+    Integer updateConsent(String dialogID);
+
+    Integer deleteByConsent(String dialogID);
 }
