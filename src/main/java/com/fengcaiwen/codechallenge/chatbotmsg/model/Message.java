@@ -1,5 +1,7 @@
 package com.fengcaiwen.codechallenge.chatbotmsg.model;
 
+import java.time.LocalDateTime;
+
 public class Message {
 
     private Long messageID;
@@ -7,15 +9,15 @@ public class Message {
     private Long dialogID;
     private String text;
     private String language;
-    private Boolean consent;
+    private LocalDateTime createTime;
 
-    public Message(Long messageID, Long customerID, Long dialogID, String text, String language, Boolean consent) {
+    public Message(Long messageID, Long customerID, Long dialogID, String text, String language, LocalDateTime createTime) {
         this.messageID = messageID;
         this.customerID = customerID;
         this.dialogID = dialogID;
         this.text = text;
         this.language = language;
-        this.consent = consent;
+        this.createTime = createTime;
     }
 
     public Long getMessageID() {
@@ -58,11 +60,11 @@ public class Message {
         this.language = language;
     }
 
-    public Boolean getConsent() {
-        return consent;
+    public LocalDateTime getCreateTime() {
+        return createTime;
     }
 
-    public void setConsent(Boolean consent) {
-        this.consent = consent;
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
     }
 }

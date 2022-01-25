@@ -12,7 +12,11 @@ customer_id bigint not null,
 dialog_id bigint not null,
 message text not null,
 language text not null,
-consent boolean not null default false
+created timestamp not null
+);
+
+create table consents(
+dialog_id bigint not null
 );
 
 create sequence messages_seq increment 1 start 1;

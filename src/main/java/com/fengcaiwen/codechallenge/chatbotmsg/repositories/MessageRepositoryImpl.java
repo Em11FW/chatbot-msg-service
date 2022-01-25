@@ -10,40 +10,43 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
 @Repository
 public class MessageRepositoryImpl implements MessageRepository {
 
-    private static final String SQL_CREATE = "INSERT INTO MESSAGES(MESSAGE_ID, CUSTOMER_ID, DIALOG_ID, MESSAGE, LANGUAGE) VALUES(NEXTVAL('MESSAGES_SEQ'), ?, ?, ?, ?)";
-    private static final String SQL_UPDATE_CONSENT = "UPDATE MESSAGES SET CONSENT = TRUE WHERE DIALOG_ID = ?";
+    private static final String SQL_CREATE_MESSAGE = "INSERT INTO MESSAGES(MESSAGE_ID, CUSTOMER_ID, DIALOG_ID, MESSAGE, LANGUAGE, CREATED) VALUES(NEXTVAL('MESSAGES_SEQ'), ?, ?, ?, ?, ?)";
+    private static final String SQL_CREATE_CONSENT = "INSERT INTO CONSENTS(DIALOG_ID) VALUES(?)";
     private static final String SQL_DELETE_BY_DIALOG_ID = "DELETE FROM MESSAGES WHERE DIALOG_ID = ?";
-    private static final String SQL_FIND_BY_CUSTOMER_ID_AND_LANGUAGE = "SELECT * FROM MESSAGES WHERE CUSTOMER_ID = ? AND LANGUAGE = ? AND CONSENT = TRUE ORDER BY MESSAGE_ID DESC";
-    private static final String SQL_FIND_BY_CUSTOMER_ID = "SELECT * FROM MESSAGES WHERE CUSTOMER_ID = ? AND CONSENT = TRUE ORDER BY MESSAGE_ID DESC";
-    private static final String SQL_FIND_BY_LANGUAGE = "SELECT * FROM MESSAGES WHERE LANGUAGE = ? AND CONSENT = TRUE ORDER BY MESSAGE_ID DESC";
-    private static final String SQL_FIND_ALL = "SELECT * FROM MESSAGES WHERE CONSENT = TRUE ORDER BY MESSAGE_ID DESC";
+    private static final String SQL_FIND_BY_CUSTOMER_ID_AND_LANGUAGE = "SELECT * FROM MESSAGES INNER JOIN CONSENTS ON MESSAGES.DIALOG_ID = CONSENTS.DIALOG_ID WHERE CUSTOMER_ID = ? AND LANGUAGE = ? ORDER BY CREATED DESC";
+    private static final String SQL_FIND_BY_CUSTOMER_ID = "SELECT * FROM MESSAGES INNER JOIN CONSENTS ON MESSAGES.DIALOG_ID = CONSENTS.DIALOG_ID WHERE CUSTOMER_ID = ? ORDER BY CREATED DESC";
+    private static final String SQL_FIND_BY_LANGUAGE = "SELECT * FROM MESSAGES INNER JOIN CONSENTS ON MESSAGES.DIALOG_ID = CONSENTS.DIALOG_ID WHERE LANGUAGE = ? ORDER BY CREATED DESC";
+    private static final String SQL_FIND_ALL = "SELECT * FROM MESSAGES INNER JOIN CONSENTS ON MESSAGES.DIALOG_ID = CONSENTS.DIALOG_ID ORDER BY CREATED DESC";
 
     @Autowired
     JdbcTemplate jdbcTemplate;
 
     @Override
-    public Long create(Long customerID, Long dialogID, String text, String language){
+    public Long create(Long customerID, Long dialogID, String text, String language, LocalDateTime now){
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(SQL_CREATE, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = connection.prepareStatement(SQL_CREATE_MESSAGE, Statement.RETURN_GENERATED_KEYS);
             ps.setLong(1, customerID);
             ps.setLong(2, dialogID);
             ps.setString(3, text);
             ps.setString(4, language);
+            ps.setTimestamp(5, Timestamp.valueOf(now));
             return ps;
         }, keyHolder);
         return (Long) Objects.requireNonNull(keyHolder.getKeys()).get("MESSAGE_ID");
     }
 
     @Override
-    public Integer updateConsent(Long dialogID) {
-        return jdbcTemplate.update(SQL_UPDATE_CONSENT, dialogID);
+    public Integer createConsent(Long dialogID) {
+        return jdbcTemplate.update(SQL_CREATE_CONSENT, dialogID);
     }
 
     @Override
@@ -79,6 +82,6 @@ public class MessageRepositoryImpl implements MessageRepository {
                 rs.getLong("DIALOG_ID"),
                 rs.getString("MESSAGE"),
                 rs.getString("LANGUAGE"),
-                rs.getBoolean("CONSENT"));
+                rs.getTimestamp("CREATED").toLocalDateTime());
     });
 }
