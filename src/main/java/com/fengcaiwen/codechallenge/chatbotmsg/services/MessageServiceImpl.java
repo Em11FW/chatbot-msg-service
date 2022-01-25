@@ -3,6 +3,7 @@ package com.fengcaiwen.codechallenge.chatbotmsg.services;
 import com.fengcaiwen.codechallenge.chatbotmsg.model.Message;
 import com.fengcaiwen.codechallenge.chatbotmsg.repositories.MessageRepository;
 import com.fengcaiwen.codechallenge.chatbotmsg.vo.MessageVO;
+import com.fengcaiwen.codechallenge.chatbotmsg.vo.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,31 +22,44 @@ public class MessageServiceImpl implements MessageService {
 
 
     @Override
-    public Long pushMessage(Long customerID, Long dialogID, MessageVO messageVO){
-        return messageRepository.create(customerID, dialogID, messageVO.getText(), messageVO.getLanguage(), LocalDateTime.now());
+    public Response pushMessage(Long customerID, Long dialogID, MessageVO messageVO){
+        if (ObjectUtils.isEmpty(messageVO.getLanguage())) {
+            return Response.fail("Language not available");
+        }
+        if (ObjectUtils.isEmpty(messageVO.getText())) {
+            return Response.fail("Text not available");
+        }
+        messageRepository.create(customerID, dialogID, messageVO.getText(), messageVO.getLanguage(), LocalDateTime.now());
+        return Response.success();
     }
 
     @Override
-    public String handleConsent(Boolean granted, Long dialogID) {
-        return granted? String.format("consent granted for dialog %s : %s", dialogID, messageRepository.createConsent(dialogID)):
-                String.format("consent denied, deleted %d messages in dialog %s", messageRepository.deleteByConsent(dialogID), dialogID);
+    public Response handleConsent(Boolean granted, Long dialogID) {
+        if (granted){
+            messageRepository.createConsent(dialogID);
+        }
+        else {
+            messageRepository.deleteByConsent(dialogID);
+        }
+        return Response.success();
     }
 
     @Override
-    public List<Message> getMessages(Long customerId, String language) {
+    public Response getMessages(Long customerId, String language) {
+        List<Message> list = Collections.emptyList();
         if (customerId != null && !ObjectUtils.isEmpty(language)){
-            return messageRepository.findByCustomerIdAndLanguage(customerId, language);
+            list = messageRepository.findByCustomerIdAndLanguage(customerId, language);
         }
-        if (customerId != null && ObjectUtils.isEmpty(language)){
-            return messageRepository.findByCustomerId(customerId);
+        else if (customerId != null && ObjectUtils.isEmpty(language)){
+            list = messageRepository.findByCustomerId(customerId);
         }
-        if (customerId == null && !ObjectUtils.isEmpty(language)){
-            return messageRepository.findByLanguage(language);
+        else if (customerId == null && !ObjectUtils.isEmpty(language)){
+            list = messageRepository.findByLanguage(language);
         }
-        if (customerId == null && ObjectUtils.isEmpty(language)) {
-            return messageRepository.findAll();
+        else if (customerId == null && ObjectUtils.isEmpty(language)) {
+            list = messageRepository.findAll();
         }
-        return Collections.emptyList();
+        return Response.success(list);
     }
 
 }
