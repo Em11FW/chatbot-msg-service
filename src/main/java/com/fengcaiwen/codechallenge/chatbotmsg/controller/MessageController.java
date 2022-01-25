@@ -2,6 +2,7 @@ package com.fengcaiwen.codechallenge.chatbotmsg.controller;
 
 import com.fengcaiwen.codechallenge.chatbotmsg.model.Message;
 import com.fengcaiwen.codechallenge.chatbotmsg.services.MessageService;
+import com.fengcaiwen.codechallenge.chatbotmsg.vo.MessageVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,14 +19,12 @@ public class MessageController {
     MessageService messageService;
 
     @PostMapping("/data/{customerID}/{dialogID}")
-    public ResponseEntity<Map<String, String>> pushMessage (@RequestBody Map<String, Object> messageMap,
+    public ResponseEntity<Map<String, String>> pushMessage (@RequestBody MessageVO messageVO,
                                                             @PathVariable("customerID") final Long customerID,
                                                             @PathVariable("dialogID") final Long dialogID){
-        String text = (String) messageMap.get("text");
-        String language = (String) messageMap.get("language");
         Long messageID = 0L;
         try {
-            messageID = messageService.pushMessage(customerID, dialogID, text, language);
+            messageID = messageService.pushMessage(customerID, dialogID, messageVO);
         } catch (Exception e){
             System.out.println(e.getMessage());
         }

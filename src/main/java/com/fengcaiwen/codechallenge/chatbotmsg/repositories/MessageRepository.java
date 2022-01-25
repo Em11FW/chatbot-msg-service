@@ -19,5 +19,5 @@ public interface MessageRepository {
 
     List<Message> findByLanguage(String language);
 
-    Integer createConsent(Long dialogID);
+    Boolean createConsent(Long dialogID);
 }

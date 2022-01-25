@@ -2,6 +2,7 @@ package com.fengcaiwen.codechallenge.chatbotmsg.services;
 
 import com.fengcaiwen.codechallenge.chatbotmsg.model.Message;
 import com.fengcaiwen.codechallenge.chatbotmsg.repositories.MessageRepository;
+import com.fengcaiwen.codechallenge.chatbotmsg.vo.MessageVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,13 +21,13 @@ public class MessageServiceImpl implements MessageService {
 
 
     @Override
-    public Long pushMessage(Long customerID, Long dialogID, String text, String language){
-        return messageRepository.create(customerID, dialogID, text, language, LocalDateTime.now());
+    public Long pushMessage(Long customerID, Long dialogID, MessageVO messageVO){
+        return messageRepository.create(customerID, dialogID, messageVO.getText(), messageVO.getLanguage(), LocalDateTime.now());
     }
 
     @Override
     public String handleConsent(Boolean granted, Long dialogID) {
-        return granted? String.format("consent granted for dialog %s", dialogID):
+        return granted? String.format("consent granted for dialog %s : %s", dialogID, messageRepository.createConsent(dialogID)):
                 String.format("consent denied, deleted %d messages in dialog %s", messageRepository.deleteByConsent(dialogID), dialogID);
     }
 

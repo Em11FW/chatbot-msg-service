@@ -11,7 +11,7 @@ message_id bigint primary key not null,
 customer_id bigint not null,
 dialog_id bigint not null,
 message text not null,
-language text not null,
+language varchar(3) not null,
 created timestamp not null
 );
 

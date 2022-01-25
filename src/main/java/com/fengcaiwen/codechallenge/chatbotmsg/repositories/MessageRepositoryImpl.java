@@ -45,8 +45,8 @@ public class MessageRepositoryImpl implements MessageRepository {
     }
 
     @Override
-    public Integer createConsent(Long dialogID) {
-        return jdbcTemplate.update(SQL_CREATE_CONSENT, dialogID);
+    public Boolean createConsent(Long dialogID) {
+        return jdbcTemplate.update(SQL_CREATE_CONSENT, dialogID) == 1;
     }
 
     @Override
