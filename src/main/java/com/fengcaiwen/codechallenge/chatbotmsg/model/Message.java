@@ -2,14 +2,14 @@ package com.fengcaiwen.codechallenge.chatbotmsg.model;
 
 public class Message {
 
-    private Integer messageID;
-    private String customerID;
-    private String dialogID;
+    private Long messageID;
+    private Long customerID;
+    private Long dialogID;
     private String text;
     private String language;
     private Boolean consent;
 
-    public Message(Integer messageID, String customerID, String dialogID, String text, String language, Boolean consent) {
+    public Message(Long messageID, Long customerID, Long dialogID, String text, String language, Boolean consent) {
         this.messageID = messageID;
         this.customerID = customerID;
         this.dialogID = dialogID;
@@ -18,27 +18,27 @@ public class Message {
         this.consent = consent;
     }
 
-    public Integer getMessageID() {
+    public Long getMessageID() {
         return messageID;
     }
 
-    public void setMessageID(Integer messageID) {
+    public void setMessageID(Long messageID) {
         this.messageID = messageID;
     }
 
-    public String getCustomerID() {
+    public Long getCustomerID() {
         return customerID;
     }
 
-    public void setCustomerID(String customerID) {
+    public void setCustomerID(Long customerID) {
         this.customerID = customerID;
     }
 
-    public String getDialogID() {
+    public Long getDialogID() {
         return dialogID;
     }
 
-    public void setDialogID(String dialogID) {
+    public void setDialogID(Long dialogID) {
         this.dialogID = dialogID;
     }
 

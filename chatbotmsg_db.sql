@@ -7,13 +7,12 @@ alter default privileges grant all on tables to chatbotmsg;
 alter default privileges grant all on sequences to chatbotmsg;
 
 create table messages(
-message_id integer primary key not null,
-customer_id text not null,
-dialog_id text not null,
+message_id bigint primary key not null,
+customer_id bigint not null,
+dialog_id bigint not null,
 message text not null,
 language text not null,
 consent boolean not null default false
 );
-
 
 create sequence messages_seq increment 1 start 1;

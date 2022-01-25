@@ -19,15 +19,15 @@ public class MessageController {
 
     @PostMapping("/data/{customerID}/{dialogID}")
     public ResponseEntity<Map<String, String>> pushMessage (@RequestBody Map<String, Object> messageMap,
-                                                            @PathVariable("customerID") final String customerID,
-                                                            @PathVariable("dialogID") final String dialogID) throws Exception {
+                                                            @PathVariable("customerID") final Long customerID,
+                                                            @PathVariable("dialogID") final Long dialogID){
         String text = (String) messageMap.get("text");
         String language = (String) messageMap.get("language");
-        Integer messageID = 0;
+        Long messageID = 0L;
         try {
             messageID = messageService.pushMessage(customerID, dialogID, text, language);
         } catch (Exception e){
-            throw new Exception("failed to push message to db");
+            System.out.println(e.getMessage());
         }
         Map<String, String> map = new HashMap<>();
         map.put("message", "pushed message " + messageID);
@@ -35,13 +35,19 @@ public class MessageController {
     }
 
     @PostMapping("/consent/{dialogID}")
-    public ResponseEntity<Map<String, String>> grantConsent(@RequestBody Boolean granted, @PathVariable("dialogID") final String dialogID) {
+    public ResponseEntity<Map<String, String>> grantConsent(@RequestBody Boolean granted, @PathVariable("dialogID") final Long dialogID) {
 
         Map<String, String> map = new HashMap<>();
         map.put("message", messageService.handleConsent(granted, dialogID));
         return new ResponseEntity<>(map, HttpStatus.OK);
 
 
+    }
+
+    @GetMapping("/data")
+    public List<Message> getMessages (@RequestParam(value = "customerId", required = false) final Long customerId,
+                                      @RequestParam(value = "language", required = false) final String language){
+        return messageService.getMessages(customerId, language);
     }
 
 

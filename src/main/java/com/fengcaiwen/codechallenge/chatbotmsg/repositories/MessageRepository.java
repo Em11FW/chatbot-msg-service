@@ -6,9 +6,17 @@ import java.util.List;
 
 public interface MessageRepository {
 
-    Integer create(String customerID, String dialogID, String text, String language);
+    Long create(Long customerID, Long dialogID, String text, String language);
 
-    Integer updateConsent(String dialogID);
+    Integer updateConsent(Long dialogID);
 
-    Integer deleteByConsent(String dialogID);
+    Integer deleteByConsent(Long dialogID);
+
+    List<Message> findAll();
+
+    List<Message> findByCustomerIdAndLanguage(Long customerId, String language);
+
+    List<Message> findByCustomerId(Long customerId);
+
+    List<Message> findByLanguage(String language);
 }
