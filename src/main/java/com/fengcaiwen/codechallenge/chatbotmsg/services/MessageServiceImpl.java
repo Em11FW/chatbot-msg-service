@@ -45,19 +45,37 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public Response getMessages(Long customerId, String language) {
+    public Response getMessages(Long customerId, String language, Integer page, Integer size) {
+
+        //pagination configuration
+        String limit = "ALL";
+        String offset = "0";
+        if (page != null && size != null){
+            limit = String.valueOf(size);
+            offset = String.valueOf((page - 1) * size);
+        }
+        else if (page != null){
+            limit = "100";
+            offset = String.valueOf((page - 1) * 100);
+        }
+        else if (size != null){
+            limit = String.valueOf(size);
+        }
+
+
+        //find by different parameters
         List<Message> list = Collections.emptyList();
         if (customerId != null && !ObjectUtils.isEmpty(language)){
-            list = messageRepository.findByCustomerIdAndLanguage(customerId, language);
+            list = messageRepository.findByCustomerIdAndLanguage(customerId, language, limit, offset);
         }
         else if (customerId != null && ObjectUtils.isEmpty(language)){
-            list = messageRepository.findByCustomerId(customerId);
+            list = messageRepository.findByCustomerId(customerId, limit, offset);
         }
         else if (customerId == null && !ObjectUtils.isEmpty(language)){
-            list = messageRepository.findByLanguage(language);
+            list = messageRepository.findByLanguage(language, limit, offset);
         }
         else if (customerId == null && ObjectUtils.isEmpty(language)) {
-            list = messageRepository.findAll();
+            list = messageRepository.findAll(limit, offset);
         }
         return Response.success(list);
     }

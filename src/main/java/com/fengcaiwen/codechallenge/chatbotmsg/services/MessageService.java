@@ -7,7 +7,7 @@ public interface MessageService {
 
     Response handleConsent(Boolean granted, Long dialogID);
 
-    Response getMessages(Long customerId, String language);
+    Response getMessages(Long customerId, String language, Integer page, Integer limit);
 
     Response pushMessage(Long customerID, Long dialogID, MessageVO messageVO);
 }

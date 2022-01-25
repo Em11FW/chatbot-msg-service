@@ -21,10 +21,10 @@ public class MessageRepositoryImpl implements MessageRepository {
     private static final String SQL_CREATE_MESSAGE = "INSERT INTO MESSAGES(MESSAGE_ID, CUSTOMER_ID, DIALOG_ID, MESSAGE, LANGUAGE, CREATED) VALUES(NEXTVAL('MESSAGES_SEQ'), ?, ?, ?, ?, ?)";
     private static final String SQL_CREATE_CONSENT = "INSERT INTO CONSENTS(DIALOG_ID) VALUES(?)";
     private static final String SQL_DELETE_BY_DIALOG_ID = "DELETE FROM MESSAGES WHERE DIALOG_ID = ?";
-    private static final String SQL_FIND_BY_CUSTOMER_ID_AND_LANGUAGE = "SELECT * FROM MESSAGES INNER JOIN CONSENTS ON MESSAGES.DIALOG_ID = CONSENTS.DIALOG_ID WHERE CUSTOMER_ID = ? AND LANGUAGE = ? ORDER BY CREATED DESC";
-    private static final String SQL_FIND_BY_CUSTOMER_ID = "SELECT * FROM MESSAGES INNER JOIN CONSENTS ON MESSAGES.DIALOG_ID = CONSENTS.DIALOG_ID WHERE CUSTOMER_ID = ? ORDER BY CREATED DESC";
-    private static final String SQL_FIND_BY_LANGUAGE = "SELECT * FROM MESSAGES INNER JOIN CONSENTS ON MESSAGES.DIALOG_ID = CONSENTS.DIALOG_ID WHERE LANGUAGE = ? ORDER BY CREATED DESC";
-    private static final String SQL_FIND_ALL = "SELECT * FROM MESSAGES INNER JOIN CONSENTS ON MESSAGES.DIALOG_ID = CONSENTS.DIALOG_ID ORDER BY CREATED DESC";
+    private static final String SQL_FIND_BY_CUSTOMER_ID_AND_LANGUAGE = "SELECT * FROM MESSAGES INNER JOIN CONSENTS ON MESSAGES.DIALOG_ID = CONSENTS.DIALOG_ID WHERE CUSTOMER_ID = ? AND LANGUAGE = ? ORDER BY CREATED DESC LIMIT %s OFFSET %s";
+    private static final String SQL_FIND_BY_CUSTOMER_ID = "SELECT * FROM MESSAGES INNER JOIN CONSENTS ON MESSAGES.DIALOG_ID = CONSENTS.DIALOG_ID WHERE CUSTOMER_ID = ? ORDER BY CREATED DESC LIMIT %s OFFSET %s";
+    private static final String SQL_FIND_BY_LANGUAGE = "SELECT * FROM MESSAGES INNER JOIN CONSENTS ON MESSAGES.DIALOG_ID = CONSENTS.DIALOG_ID WHERE LANGUAGE = ? ORDER BY CREATED DESC LIMIT %s OFFSET %s";
+    private static final String SQL_FIND_ALL = "SELECT * FROM MESSAGES INNER JOIN CONSENTS ON MESSAGES.DIALOG_ID = CONSENTS.DIALOG_ID ORDER BY CREATED DESC LIMIT %s OFFSET %s";
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -55,23 +55,23 @@ public class MessageRepositoryImpl implements MessageRepository {
     }
 
     @Override
-    public List<Message> findAll() {
-        return jdbcTemplate.query(SQL_FIND_ALL, messageRowMapper);
+    public List<Message> findAll(String limit, String offset) {
+        return jdbcTemplate.query(String.format(SQL_FIND_ALL, limit, offset), messageRowMapper);
     }
 
     @Override
-    public List<Message> findByCustomerIdAndLanguage(Long customerId, String language) {
-        return jdbcTemplate.query(SQL_FIND_BY_CUSTOMER_ID_AND_LANGUAGE, messageRowMapper, customerId, language);
+    public List<Message> findByCustomerIdAndLanguage(Long customerId, String language, String limit, String offset) {
+        return jdbcTemplate.query(String.format(SQL_FIND_BY_CUSTOMER_ID_AND_LANGUAGE, limit, offset), messageRowMapper, customerId, language);
     }
 
     @Override
-    public List<Message> findByCustomerId(Long customerId) {
-        return jdbcTemplate.query(SQL_FIND_BY_CUSTOMER_ID, messageRowMapper, customerId);
+    public List<Message> findByCustomerId(Long customerId, String limit, String offset) {
+        return jdbcTemplate.query(String.format(SQL_FIND_BY_CUSTOMER_ID, limit, offset), messageRowMapper, customerId);
     }
 
     @Override
-    public List<Message> findByLanguage(String language) {
-        return jdbcTemplate.query(SQL_FIND_BY_LANGUAGE, messageRowMapper, language);
+    public List<Message> findByLanguage(String language, String limit, String offset) {
+        return jdbcTemplate.query(String.format(SQL_FIND_BY_LANGUAGE, limit, offset), messageRowMapper, language);
     }
 
 

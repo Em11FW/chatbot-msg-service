@@ -33,8 +33,10 @@ public class MessageController {
 
     @GetMapping("/data")
     public Response getMessages (@RequestParam(value = "customerId", required = false) final Long customerId,
-                                      @RequestParam(value = "language", required = false) final String language){
-        return messageService.getMessages(customerId, language);
+                                 @RequestParam(value = "language", required = false) final String language,
+                                 @RequestParam(value = "page", required = false) final Integer page,
+                                 @RequestParam(value = "size", required = false) final Integer size){
+        return messageService.getMessages(customerId, language, page, size);
     }
 
 

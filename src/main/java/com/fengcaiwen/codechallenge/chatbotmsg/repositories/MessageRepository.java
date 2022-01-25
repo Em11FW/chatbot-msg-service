@@ -11,13 +11,13 @@ public interface MessageRepository {
 
     Integer deleteByConsent(Long dialogID);
 
-    List<Message> findAll();
+    List<Message> findAll(String limit, String offset);
 
-    List<Message> findByCustomerIdAndLanguage(Long customerId, String language);
+    List<Message> findByCustomerIdAndLanguage(Long customerId, String language, String limit, String offset);
 
-    List<Message> findByCustomerId(Long customerId);
+    List<Message> findByCustomerId(Long customerId, String limit, String offset);
 
-    List<Message> findByLanguage(String language);
+    List<Message> findByLanguage(String language, String limit, String offset);
 
     Boolean createConsent(Long dialogID);
 }
