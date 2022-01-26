@@ -12,15 +12,15 @@ public class MessageController {
     @Autowired
     MessageService messageService;
 
-    @PostMapping("/data/{customerID}/{dialogID}")
+    @PostMapping("/data/{customerId}/{dialogId}")
     public Response pushMessage (@RequestBody MessageVO messageVO,
-                                 @PathVariable("customerID") final Long customerId,
-                                 @PathVariable("dialogID") final Long dialogId){
+                                 @PathVariable("customerId") final Long customerId,
+                                 @PathVariable("dialogId") final Long dialogId){
         return messageService.pushMessage(customerId, dialogId, messageVO);
     }
 
-    @PostMapping("/consents/{dialogID}")
-    public Response grantConsent(@RequestBody Boolean granted, @PathVariable("dialogID") final Long dialogId) {
+    @PostMapping("/consents/{dialogId}")
+    public Response grantConsent(@RequestBody Boolean granted, @PathVariable("dialogId") final Long dialogId) {
         return messageService.handleConsent(granted, dialogId);
     }
 

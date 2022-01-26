@@ -6,6 +6,7 @@ import com.fengcaiwen.codechallenge.chatbotmsg.vo.MessageVO;
 import com.fengcaiwen.codechallenge.chatbotmsg.vo.Response;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -82,7 +83,7 @@ public class MessageServiceImpl implements MessageService {
 
         //pagination and sorting configuration
         Integer pageSize = 100;
-        Integer pageNo = 1;
+        Integer pageNo = 0;
         if (page != null && size != null){
             pageSize = size;
             pageNo = page;
@@ -93,23 +94,24 @@ public class MessageServiceImpl implements MessageService {
         else if (size != null){
             pageSize = size;
         }
-        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("created_at").descending());
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by("createTime").descending());
 
         //find by different parameters
         List<Message> list = Collections.emptyList();
+        Object o = new Object();
         if (customerId != null && !ObjectUtils.isEmpty(language)){
-            list = messageRepository.findByCustomerIdAndLanguage(customerId, language, paging);
+            o = messageRepository.findByCustomerIdAndLanguage(customerId, language, paging);
         }
-        else if (customerId != null && ObjectUtils.isEmpty(language)){
-            list = messageRepository.findByCustomerId(customerId, paging);
+        else if (customerId != null){
+            o = messageRepository.findByCustomerId(customerId, paging);
         }
-        else if (customerId == null && !ObjectUtils.isEmpty(language)){
-            list = messageRepository.findByLanguage(language, paging);
+        else if (!ObjectUtils.isEmpty(language)){
+            o = messageRepository.findByLanguage(language, paging);
         }
-        else if (customerId == null && ObjectUtils.isEmpty(language)) {
-            list = messageRepository.findAll(paging);
+        else {
+            o = messageRepository.findAll(paging).get();
         }
-        return Response.success(list);
+        return Response.success(o);
     }
 
 }
