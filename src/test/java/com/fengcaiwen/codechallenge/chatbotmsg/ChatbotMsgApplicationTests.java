@@ -9,5 +9,4 @@ class ChatbotMsgApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }
