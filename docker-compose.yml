@@ -1,0 +1,35 @@
+version: '2'
+
+services:
+  app:
+    image: 'chatbotmsg:latest'
+    build:
+      context: .
+    container_name: app
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres-db
+      - redis-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/compose-postgres
+      - SPRING_DATASOURCE_USERNAME=compose-postgres
+      - SPRING_DATASOURCE_PASSWORD=compose-postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_REDIS_DATABASE=0
+      - SPRING_REDIS_HOST=redis-db
+      - SPRING_REDIS_PORT=6379
+
+  postgres-db:
+    image: 'postgres:13.1-alpine'
+    container_name: postgres-db
+    environment:
+      - POSTGRES_USER=compose-postgres
+      - POSTGRES_PASSWORD=compose-postgres
+
+  redis-db:
+    image: 'redis'
+    container_name: redis-db
+    ports:
+      - 6379:6379
+    command: redis-server

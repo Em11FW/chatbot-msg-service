@@ -1,23 +1,21 @@
 package com.fengcaiwen.codechallenge.chatbotmsg.repositories;
 
-import com.fengcaiwen.codechallenge.chatbotmsg.model.Message;
+import com.fengcaiwen.codechallenge.chatbotmsg.entity.Message;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-public interface MessageRepository {
+@Repository
+public interface MessageRepository extends PagingAndSortingRepository<Message, Long> {
 
-    Long create(Long customerID, Long dialogID, String text, String language, LocalDateTime now);
+    List<Message> findByCustomerIdAndLanguage(Long customerId, String language, Pageable paging);
 
-    Integer deleteByConsent(Long dialogID);
+    List<Message> findByCustomerId(Long customerId, Pageable paging);
 
-    List<Message> findAll(String limit, String offset);
+    List<Message> findByLanguage(String language, Pageable paging);
 
-    List<Message> findByCustomerIdAndLanguage(Long customerId, String language, String limit, String offset);
-
-    List<Message> findByCustomerId(Long customerId, String limit, String offset);
-
-    List<Message> findByLanguage(String language, String limit, String offset);
-
-    Boolean createConsent(Long dialogID);
+    Page<Message> findAll(Pageable paging);
 }
