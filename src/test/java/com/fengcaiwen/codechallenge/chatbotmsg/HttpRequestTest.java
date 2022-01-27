@@ -15,6 +15,8 @@ import java.net.http.HttpResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+
+//TODO more tests need to be done!
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class HttpRequestTest {
 
